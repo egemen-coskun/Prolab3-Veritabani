@@ -1,0 +1,37 @@
+[
+  {
+    "kullanici_adi": "ahmet_y",
+    "yas": 25,
+    "aktif_mi": true,
+    "adres": {
+      "sehir": "Kocaeli",
+      "ilce": "İzmit",
+      "posta_kodu": 41000
+    },
+    "hobiler": ["Yüzme", "Kitap Okuma", "Kodlama"],
+    "siparisler": [
+      {
+        "siparis_no": "S1001",
+        "tutar": 250.50,
+        "urunler": ["Laptop Çantası", "Mouse"]
+      },
+      {
+        "siparis_no": "S1002",
+        "tutar": 120.00,
+        "urunler": ["Klavye"]
+      }
+    ]
+  },
+  {
+    "kullanici_adi": "ayse_k",
+    "yas": 22,
+    "aktif_mi": false,
+    "adres": {
+      "sehir": "İstanbul",
+      "ilce": "Kadıköy",
+      "posta_kodu": 34000
+    },
+    "hobiler": ["Müzik", "Resim"],
+    "siparisler": []
+  }
+]
