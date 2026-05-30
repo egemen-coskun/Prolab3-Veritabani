@@ -20,25 +20,25 @@ public class DatabaseManager {
                 // Drop existing tables
                 for (String tableName : schemas.keySet()) {
                     try (Statement stmt = conn.createStatement()) {
-                        stmt.execute("DROP TABLE IF EXISTS " + tableName);
+                        stmt.execute("DROP TABLE IF EXISTS \"" + tableName + "\"");
                     }
                 }
 
                 // Create tables
                 for (TableSchema schema : schemas.values()) {
-                    StringBuilder sql = new StringBuilder("CREATE TABLE ");
-                    sql.append(schema.getTableName()).append(" (");
+                    StringBuilder sql = new StringBuilder("CREATE TABLE \"");
+                    sql.append(schema.getTableName()).append("\" (");
                     
                     List<String> colDefs = new ArrayList<>();
                     for (Map.Entry<String, String> entry : schema.getColumns().entrySet()) {
-                        colDefs.add(entry.getKey() + " " + entry.getValue());
+                        colDefs.add("\"" + entry.getKey() + "\" " + entry.getValue());
                     }
                     sql.append(String.join(", ", colDefs));
                     
                     // Add foreign key constraint if exists
                     if (schema.getForeignKeyColumn() != null && schema.getParentTable() != null) {
-                        sql.append(", FOREIGN KEY(").append(schema.getForeignKeyColumn())
-                           .append(") REFERENCES ").append(schema.getParentTable()).append("(id)");
+                        sql.append(", FOREIGN KEY(\"").append(schema.getForeignKeyColumn())
+                           .append("\") REFERENCES \"").append(schema.getParentTable()).append("\"(\"id\")");
                     }
                     
                     sql.append(");");
@@ -51,11 +51,12 @@ public class DatabaseManager {
                 for (TableSchema schema : schemas.values()) {
                     if (schema.getRows().isEmpty()) continue;
                     
-                    StringBuilder sql = new StringBuilder("INSERT INTO ");
-                    sql.append(schema.getTableName()).append(" (");
+                    StringBuilder sql = new StringBuilder("INSERT INTO \"");
+                    sql.append(schema.getTableName()).append("\" (");
                     
                     List<String> cols = new ArrayList<>(schema.getColumns().keySet());
-                    sql.append(String.join(", ", cols)).append(") VALUES (");
+                    String quotedCols = String.join(", ", cols.stream().map(c -> "\"" + c + "\"").toArray(String[]::new));
+                    sql.append(quotedCols).append(") VALUES (");
                     
                     String placeholders = String.join(", ", cols.stream().map(c -> "?").toArray(String[]::new));
                     sql.append(placeholders).append(")");
@@ -94,7 +95,7 @@ public class DatabaseManager {
             }
             try (Statement stmt = conn.createStatement()) {
                 for (String table : tables) {
-                    stmt.execute("DROP TABLE IF EXISTS " + table);
+                    stmt.execute("DROP TABLE IF EXISTS \"" + table + "\"");
                 }
             }
         }
@@ -117,7 +118,7 @@ public class DatabaseManager {
 
     public TableData tabloVerisiniGetir(String tableName) throws SQLException {
         TableData data = new TableData();
-        String query = "SELECT * FROM " + tableName;
+        String query = "SELECT * FROM \"" + tableName + "\"";
         
         try (Connection conn = baglantiGetir();
              Statement stmt = conn.createStatement();

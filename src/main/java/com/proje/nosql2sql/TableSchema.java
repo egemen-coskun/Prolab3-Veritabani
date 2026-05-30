@@ -30,7 +30,7 @@ public class TableSchema {
         } else {
             // Upgrade type if necessary, e.g., INTEGER -> VARCHAR if mixed types
             String currentType = columns.get(name);
-            if (!currentType.equals(type) && "VARCHAR".equals(type)) {
+            if (!currentType.equals(type) && type.startsWith("VARCHAR")) {
                 columns.put(name, type);
             }
         }

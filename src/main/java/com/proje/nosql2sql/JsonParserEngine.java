@@ -76,8 +76,15 @@ public class JsonParserEngine {
             String columnName = prefix.isEmpty() ? key : prefix + "_" + key;
 
             if (value.isObject()) {
-                // Flatten nested objects
-                objeDuzlestir(value, columnName, schema, row, currentId, currentTableName);
+                if (isSimpleObject(value)) {
+                    // Flatten simple nested objects (only primitives)
+                    objeDuzlestir(value, columnName, schema, row, currentId, currentTableName);
+                } else {
+                    // 3NF: Extract complex nested objects into a new table (1:1 relationship via child table)
+                    String childTableName = currentTableName + "_" + key;
+                    String foreignKey = currentTableName + "_id";
+                    objeCozumle(value, childTableName, currentTableName, foreignKey, currentId);
+                }
             } else if (value.isArray()) {
                 // Arrays become a new table 1:N
                 String childTableName = currentTableName + "_" + key;
@@ -89,6 +96,18 @@ public class JsonParserEngine {
                 row.put(columnName, degerCikar(value));
             }
         }
+    }
+
+    private boolean isSimpleObject(JsonNode objectNode) {
+        if (!objectNode.isObject()) return false;
+        Iterator<JsonNode> elements = objectNode.elements();
+        while (elements.hasNext()) {
+            JsonNode val = elements.next();
+            if (val.isObject() || val.isArray()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private TableSchema semaGetirVeyaOlustur(String tableName, String parentTable, String foreignKeyColumn) {
