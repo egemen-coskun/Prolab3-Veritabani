@@ -20,9 +20,17 @@ public class TableSchema {
         this.columns.put("id", "INTEGER PRIMARY KEY AUTOINCREMENT");
     }
 
-    public String getTableName() { return tableName; }
-    public Map<String, String> getColumns() { return columns; }
-    public List<Map<String, Object>> getRows() { return rows; }
+    public String getTableName() {
+        return tableName;
+    }
+
+    public Map<String, String> getColumns() {
+        return columns;
+    }
+
+    public List<Map<String, Object>> getRows() {
+        return rows;
+    }
 
     public void addColumn(String name, String type) {
         if (!columns.containsKey(name)) {
@@ -46,6 +54,11 @@ public class TableSchema {
         addColumn(foreignKeyColumn, "INTEGER");
     }
 
-    public String getParentTable() { return parentTable; }
-    public String getForeignKeyColumn() { return foreignKeyColumn; }
+    public String getParentTable() {
+        return parentTable;
+    }
+
+    public String getForeignKeyColumn() {
+        return foreignKeyColumn;
+    }
 }

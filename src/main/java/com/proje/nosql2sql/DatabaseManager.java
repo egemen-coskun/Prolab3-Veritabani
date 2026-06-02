@@ -28,19 +28,19 @@ public class DatabaseManager {
                 for (TableSchema schema : schemas.values()) {
                     StringBuilder sql = new StringBuilder("CREATE TABLE \"");
                     sql.append(schema.getTableName()).append("\" (");
-                    
+
                     List<String> colDefs = new ArrayList<>();
                     for (Map.Entry<String, String> entry : schema.getColumns().entrySet()) {
                         colDefs.add("\"" + entry.getKey() + "\" " + entry.getValue());
                     }
                     sql.append(String.join(", ", colDefs));
-                    
+
                     // Add foreign key constraint if exists
                     if (schema.getForeignKeyColumn() != null && schema.getParentTable() != null) {
                         sql.append(", FOREIGN KEY(\"").append(schema.getForeignKeyColumn())
-                           .append("\") REFERENCES \"").append(schema.getParentTable()).append("\"(\"id\")");
+                                .append("\") REFERENCES \"").append(schema.getParentTable()).append("\"(\"id\")");
                     }
-                    
+
                     sql.append(");");
                     try (Statement stmt = conn.createStatement()) {
                         stmt.execute(sql.toString());
@@ -49,15 +49,17 @@ public class DatabaseManager {
 
                 // Insert data
                 for (TableSchema schema : schemas.values()) {
-                    if (schema.getRows().isEmpty()) continue;
-                    
+                    if (schema.getRows().isEmpty())
+                        continue;
+
                     StringBuilder sql = new StringBuilder("INSERT INTO \"");
                     sql.append(schema.getTableName()).append("\" (");
-                    
+
                     List<String> cols = new ArrayList<>(schema.getColumns().keySet());
-                    String quotedCols = String.join(", ", cols.stream().map(c -> "\"" + c + "\"").toArray(String[]::new));
+                    String quotedCols = String.join(", ",
+                            cols.stream().map(c -> "\"" + c + "\"").toArray(String[]::new));
                     sql.append(quotedCols).append(") VALUES (");
-                    
+
                     String placeholders = String.join(", ", cols.stream().map(c -> "?").toArray(String[]::new));
                     sql.append(placeholders).append(")");
 
@@ -85,7 +87,7 @@ public class DatabaseManager {
     public void tumTablolariTemizle() throws SQLException {
         try (Connection conn = baglantiGetir()) {
             DatabaseMetaData meta = conn.getMetaData();
-            ResultSet rs = meta.getTables(null, null, null, new String[]{"TABLE"});
+            ResultSet rs = meta.getTables(null, null, null, new String[] { "TABLE" });
             List<String> tables = new ArrayList<>();
             while (rs.next()) {
                 String tableName = rs.getString("TABLE_NAME");
@@ -105,7 +107,7 @@ public class DatabaseManager {
         List<String> tables = new ArrayList<>();
         try (Connection conn = baglantiGetir()) {
             DatabaseMetaData meta = conn.getMetaData();
-            ResultSet rs = meta.getTables(null, null, null, new String[]{"TABLE"});
+            ResultSet rs = meta.getTables(null, null, null, new String[] { "TABLE" });
             while (rs.next()) {
                 String tableName = rs.getString("TABLE_NAME");
                 if (!tableName.equals("sqlite_sequence")) {
@@ -119,18 +121,18 @@ public class DatabaseManager {
     public TableData tabloVerisiniGetir(String tableName) throws SQLException {
         TableData data = new TableData();
         String query = "SELECT * FROM \"" + tableName + "\"";
-        
+
         try (Connection conn = baglantiGetir();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-             
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(query)) {
+
             ResultSetMetaData meta = rs.getMetaData();
             int columnCount = meta.getColumnCount();
-            
+
             for (int i = 1; i <= columnCount; i++) {
                 data.columns.add(meta.getColumnName(i));
             }
-            
+
             while (rs.next()) {
                 Vector<Object> row = new Vector<>();
                 for (int i = 1; i <= columnCount; i++) {
