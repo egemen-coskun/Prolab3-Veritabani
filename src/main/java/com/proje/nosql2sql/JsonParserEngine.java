@@ -12,11 +12,11 @@ import java.util.Map;
 public class JsonParserEngine {
 
     private Map<String, TableSchema> schemas = new LinkedHashMap<>();
-    private int idCounter = 1;
+    private Map<String, Integer> tableIdCounters = new LinkedHashMap<>();
 
     public Map<String, TableSchema> dosyaCozumle(File file, String rootTableName) throws IOException {
         schemas.clear();
-        idCounter = 1;
+        tableIdCounters.clear();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(file);
 
@@ -37,7 +37,7 @@ public class JsonParserEngine {
                 // Array of primitives (e.g. [1, 2, 3]). We create a simple row.
                 TableSchema schema = semaGetirVeyaOlustur(tableName, parentTable, foreignKeyColumn);
                 Map<String, Object> row = new LinkedHashMap<>();
-                int currentId = idCounter++;
+                int currentId = getNextId(tableName);
                 row.put("id", currentId);
                 
                 String colName = "value";
@@ -55,7 +55,7 @@ public class JsonParserEngine {
     private void objeCozumle(JsonNode objectNode, String tableName, String parentTable, String foreignKeyColumn, Integer parentId) {
         TableSchema schema = semaGetirVeyaOlustur(tableName, parentTable, foreignKeyColumn);
         Map<String, Object> row = new LinkedHashMap<>();
-        int currentId = idCounter++;
+        int currentId = getNextId(tableName);
         row.put("id", currentId);
 
         if (foreignKeyColumn != null && parentId != null) {
@@ -108,6 +108,12 @@ public class JsonParserEngine {
             }
         }
         return true;
+    }
+
+    private int getNextId(String tableName) {
+        int id = tableIdCounters.getOrDefault(tableName, 1);
+        tableIdCounters.put(tableName, id + 1);
+        return id;
     }
 
     private TableSchema semaGetirVeyaOlustur(String tableName, String parentTable, String foreignKeyColumn) {
