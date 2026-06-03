@@ -1,23 +1,34 @@
 package com.proje.nosql2sql;
 
+import java.io.File;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javafx.application.Application;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 
 public class MainApp extends Application {
 
@@ -62,10 +73,10 @@ public class MainApp extends Application {
         root.setTop(topPanel);
         BorderPane.setMargin(topPanel, new Insets(0, 0, 10, 0));
 
-        // Center Panel (SplitPane)
+        
         SplitPane splitPane = new SplitPane();
         
-        // Left side: JSON View
+     
         VBox leftPane = new VBox(10);
         leftPane.getStyleClass().add("panel-white");
         Label jsonLabel = new Label("JSON Görünümü");
@@ -75,7 +86,7 @@ public class MainApp extends Application {
         VBox.setVgrow(jsonTextArea, Priority.ALWAYS);
         leftPane.getChildren().addAll(jsonLabel, jsonTextArea);
         
-        // Right side: SQL Table View
+       
         VBox rightPane = new VBox(10);
         rightPane.getStyleClass().add("panel-white");
         Label sqlLabel = new Label("SQL Veritabanı Gösterimi");
@@ -93,13 +104,13 @@ public class MainApp extends Application {
         splitPane.setDividerPositions(0.4);
         root.setCenter(splitPane);
 
-        // Bottom Panel
+     
         lblStatus = new Label("Sistem Hazır. Lütfen bir JSON dosyası seçin.");
         lblStatus.getStyleClass().add("label-info");
         root.setBottom(lblStatus);
         BorderPane.setMargin(lblStatus, new Insets(10, 0, 0, 0));
 
-        // Event Handlers
+   
         btnSelectFile.setOnAction(e -> dosyaSec());
         btnConvert.setOnAction(e -> donusturVeAktar());
         btnReset.setOnAction(e -> veritabaniniSifirla());

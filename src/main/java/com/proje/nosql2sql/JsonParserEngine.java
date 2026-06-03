@@ -1,13 +1,13 @@
 package com.proje.nosql2sql;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonParserEngine {
 
@@ -77,21 +77,20 @@ public class JsonParserEngine {
 
             if (value.isObject()) {
                 if (isSimpleObject(value)) {
-                    // Flatten simple nested objects (only primitives)
                     objeDuzlestir(value, columnName, schema, row, currentId, currentTableName);
                 } else {
-                    // 3NF: Extract complex nested objects into a new table (1:1 relationship via child table)
+                  
                     String childTableName = currentTableName + "_" + key;
                     String foreignKey = currentTableName + "_id";
                     objeCozumle(value, childTableName, currentTableName, foreignKey, currentId);
                 }
             } else if (value.isArray()) {
-                // Arrays become a new table 1:N
+            
                 String childTableName = currentTableName + "_" + key;
                 String foreignKey = currentTableName + "_id";
                 diziCozumle(value, childTableName, currentTableName, foreignKey, currentId);
             } else if (!value.isNull()) {
-                // Primitive
+               
                 schema.addColumn(columnName, sqlTipiniBelirle(value));
                 row.put(columnName, degerCikar(value));
             }

@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class TableSchema {
     private String tableName;
-    private Map<String, String> columns; // ColumnName -> SQLType
+    private Map<String, String> columns;
     private List<Map<String, Object>> rows;
     private String parentTable;
     private String foreignKeyColumn;
@@ -16,7 +16,7 @@ public class TableSchema {
         this.tableName = tableName;
         this.columns = new LinkedHashMap<>();
         this.rows = new ArrayList<>();
-        // Default Primary Key
+    
         this.columns.put("id", "INTEGER PRIMARY KEY AUTOINCREMENT");
     }
 
@@ -28,7 +28,6 @@ public class TableSchema {
         if (!columns.containsKey(name)) {
             columns.put(name, type);
         } else {
-            // Upgrade type if necessary, e.g., INTEGER -> VARCHAR if mixed types
             String currentType = columns.get(name);
             if (!currentType.equals(type) && type.startsWith("VARCHAR")) {
                 columns.put(name, type);
